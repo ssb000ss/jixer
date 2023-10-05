@@ -52,20 +52,23 @@ def main():
     engines = init_settings()
 
     while True:
-        show_engine_menu(engines)
-        print("Select an engine for search or enter 'exit'")
-        engine_key = input("> ").strip()
+        try:
+            show_engine_menu(engines)
+            print("Select an engine for search or enter 'exit'")
+            engine_key = input("> ").strip()
 
-        if engine_key == "exit":
-            break
+            if engine_key == "exit":
+                break
 
-        if engine_key.isdigit() and 0 < int(engine_key) <= len(engines):
-            engine = list(engines.values())[int(engine_key) - 1]
-            print(f"Enter a valid query for the {engine} engine")
-            query = input("> ")
-            perform_search(engine, query)
-        else:
-            logger.error(f"Input error. Enter a number from 1 to {len(engines)}")
+            if engine_key.isdigit() and 0 < int(engine_key) <= len(engines):
+                engine = list(engines.values())[int(engine_key) - 1]
+                print(f"Enter a valid query for the {engine} engine")
+                query = input("> ")
+                perform_search(engine, query)
+            else:
+                logger.error(f"Input error. Enter a number from 1 to {len(engines)}")
+        except KeyboardInterrupt:
+            continue
 
 
 if __name__ == '__main__':
