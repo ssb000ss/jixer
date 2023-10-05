@@ -8,6 +8,7 @@ import grequests
 import requests
 
 from utils.exceptions import NullResultException
+from utils.helper import ipv4_sort
 
 
 class BaseApiClient():
@@ -135,7 +136,7 @@ class BaseApiClient():
     def search(self, query: str, count: int) -> list[str]:
         result_list = self._search(query, count)
         servers = self.get_parsed_ip_list(result_list)
-        return servers
+        return ipv4_sort(servers)
 
     def get_ip_list(self, query: str, count) -> list[str]:
         results = self.search(query, count)
