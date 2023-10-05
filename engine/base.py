@@ -12,30 +12,30 @@ from utils.exceptions import NullResultException
 
 class BaseApiClient():
     """
-        Базовый класс для API-движка.
+        Base class for the API engine.
 
-        Атрибуты:
-            api_key (str): API-ключ движка.
-            _MAX_RETRY_ATTEMPTS (int): Максимальное количество попыток повторной отправки запроса.
-            _RESULTS_PER_PAGE (int): Количество результатов на одной странице.
-            _TOTAL_ITEMS_KWORD (str): Ключ для получения общего количества элементов в ответе API.
-            BASE_URL (str): Базовый URL для API-запросов.
-            COUNT_ENDPOINT (str): Конечная точка для запроса количества элементов.
-            SEARCH_ENDPOINT (str): Конечная точка для поисковых запросов.
-            PARAMS (dict): Параметры запроса.
-            HEADERS (dict): Заголовки запроса.
-            _QUERY_KWORD (str): Ключ для передачи поискового запроса.
-            _COUNT_KWORD (str): Ключ для получения количества элементов в ответе API.
-            _IP_KWORD (str): Ключ для извлечения IP-адресов из ответа API.
-            _PAGE_KWORD (str): Ключ для передачи страницы
+        Attributes:
+            api_key (str): API key for the engine.
+            _MAX_RETRY_ATTEMPTS (int): Maximum number of retry attempts.
+            _RESULTS_PER_PAGE (int): Number of results per page.
+            _TOTAL_ITEMS_KWORD (str): Key to retrieve the total number of items in the API response.
+            BASE_URL (str): Base URL for API requests.
+            COUNT_ENDPOINT (str): Endpoint for counting items.
+            SEARCH_ENDPOINT (str): Endpoint for search queries.
+            PARAMS (dict): Request parameters.
+            HEADERS (dict): Request headers.
+            _QUERY_KWORD (str): Key for passing search queries.
+            _COUNT_KWORD (str): Key to retrieve the count in the API response.
+            _IP_KWORD (str): Key to extract IP addresses from the API response.
+            _PAGE_KWORD (str): Key for passing the page.
     """
 
     def __init__(self, api_key):
         """
-             Инициализация объекта BaseApiClient.
+             Initializes the BaseApiClient object.
 
              Args:
-                 api_key (str): API-ключ клиента.
+                 api_key (str): API key for the client.
         """
         self._MAX_RETRY_ATTEMPTS = 10
         self._RESULTS_PER_PAGE = 100
@@ -54,61 +54,60 @@ class BaseApiClient():
 
     def count(self, query: str) -> int:
         """
-          Получение количества элементов по запросу.
+          Get the number of items for a query.
 
           Args:
-              query (str): Поисковый запрос.
+              query (str): Search query.
 
           Returns:
-              int: Количество элементов, удовлетворяющих запросу.
+              int: Number of items matching the query.
         """
         params_copy = self.PARAMS.copy()
         params_copy[self._QUERY_KWORD] = query
         try:
-            self.logger.info(f'Получение количество серверов по запросу: {query}')
+            self.logger.info(f'Getting the number of servers for query: {query}')
             result = grequests.get(self.COUNT_ENDPOINT, params=params_copy, headers=self.HEADERS).send()
             if result.response.status_code == HTTPStatus.OK:
                 count = result.response.json()[self._COUNT_KWORD]
-                self.logger.info(f'По вашему запросу: [{query}], найдено [{count}]')
+                self.logger.info(f'For your query: [{query}], found [{count}]')
                 return count
             else:
-                self.logger.error(f'Ошибка HTTP: {result.responses.status_code}')
-                self.logger.error(f'Текст ошибки: {result.responses.text}')
+                self.logger.error(f'HTTP error: {result.responses.status_code}')
+                self.logger.error(f'Error text: {result.responses.text}')
         except requests.exceptions.RequestException as e:
-            self.logger.error(f'Ошибка при выполнении запроса: {str(e)}')
-
+            self.logger.error(f'Error while making the request: {str(e)}')
         except Exception as e:
-            self.logger.error(f'Произошла необрабатываемая ошибка: {str(e)}')
+            self.logger.error(f'An unhandled error occurred: {str(e)}')
 
     def get_page_count(self, count: int) -> int:
         """
-        Вычисление количества страниц на основе общего количества элементов.
+        Calculate the number of pages based on the total number of items.
 
         Args:
-            count (int): Общее количество элементов.
+            count (int): Total number of items.
 
         Returns:
-            int: Количество страниц.
+            int: Number of pages.
         """
         return math.ceil(count / self._RESULTS_PER_PAGE)
 
     def _search(self, query: str, count: int) -> list[str]:
         """
-        Выполнение поискового запроса к API.
+        Execute a search query to the API.
 
         Args:
-            query (str): Поисковый запрос.
-            count (int): Количество элементов, удовлетворяющих запросу.
+            query (str): Search query.
+            count (int): Number of items matching the query.
 
         Returns:
-            list[str]: Список результатов поиска.
+            list[str]: List of search results.
         """
         request_list = self.get_request_page_list(query, count)
         results = []
         for request in request_list:
             for retry in range(1, self._MAX_RETRY_ATTEMPTS):
                 try:
-                    self.logger.info(f'Отправка запроса: {query}, Параметры: {request.kwargs}')
+                    self.logger.info(f'Sending a request: {query}, Parameters: {request.kwargs}')
                     result = request.send()
                     if result.response.status_code == HTTPStatus.OK:
                         page_results = result.response.json()[self._TOTAL_ITEMS_KWORD]
@@ -118,20 +117,19 @@ class BaseApiClient():
                         else:
                             raise NullResultException
                     else:
-                        self.logger.error(f'Ошибка HTTP: {result.response.status_code}')
-                        self.logger.error(f'Текст ошибки: {result.response.text}')
-
+                        self.logger.error(f'HTTP error: {result.response.status_code}')
+                        self.logger.error(f'Error text: {result.response.text}')
                 except (
                         NullResultException, requests.exceptions.Timeout,
                         requests.exceptions.RequestException) as e:
                     if isinstance(e, NullResultException):
-                        self.logger.error(f'Не удалось получить список IP-адресов из API: {e}')
+                        self.logger.error(f'Failed to retrieve the list of IP addresses from the API: {e}')
                     if retry < self._MAX_RETRY_ATTEMPTS - 1:
                         self.logger.warning(
-                            f'Переотправляем запрос через {retry} секунду (попытка {retry} из {self._MAX_RETRY_ATTEMPTS})')
+                            f'Retrying the request in {retry} seconds (attempt {retry} of {self._MAX_RETRY_ATTEMPTS})')
                         time.sleep(retry)
                     else:
-                        self.logger.error(f'Не удалось получить результат после {retry} попыток')
+                        self.logger.error(f'Failed to get results after {retry} attempts')
         return results
 
     def search(self, query: str, count: int) -> list[str]:
@@ -146,14 +144,14 @@ class BaseApiClient():
 
     def save_results(self, query: str, servers: list[str]) -> bool:
         """
-        Сохранение результатов поиска в файл.
+        Save search results to a file.
 
         Args:
-            query (str): Поисковый запрос.
-            servers (list[str]): Список IP-адресов для сохранения.
+            query (str): Search query.
+            servers (list[str]): List of IP addresses to save.
 
         Returns:
-            bool: True, если результаты успешно сохранены, False в случае ошибки.
+            bool: True if the results were successfully saved, False in case of an error.
         """
         folder_name = 'results'
         if not os.path.exists(folder_name):
@@ -162,36 +160,36 @@ class BaseApiClient():
         file_name = f'{folder_name}/{current_datetime.strftime("%Y_%m_%d_%H_%M_%S")}_{self}.txt'
         try:
             with open(file_name, 'w') as file:
-                file.write(f'Results query:{query} for client {self} - {file_name}\n')
+                file.write(f'Results query: {query} for client {self} - {file_name}\n')
                 for server in servers:
                     file.write(server + '\n')
             self.logger.info(
-                f'Результаты по запроса {query} для клиента "{str(self)}", успешно записаны в файл "{file_name}".')
+                f'Results for the query {query} for client "{str(self)}" were successfully written to the file "{file_name}".')
             return True
         except IOError as e:
-            self.logger.error(f'Произошла ошибка при записи результатов в файл: {e}')
+            self.logger.error(f'An error occurred while writing results to the file: {e}')
 
     def get_request_page_list(self, query: str, count: int) -> list:
         """
-        Получение списка запросов для разбивки результатов по страницам.
+        Get a list of requests for paging the results.
 
         Args:
-            query (str): Поисковый запрос.
-            count (int): Количество элементов, удовлетворяющих запросу.
+            query (str): Search query.
+            count (int): Number of items matching the query.
 
         Returns:
-            list[grequests.Request]: Список запросов для поиска по страницам.
+            list[grequests.Request]: List of requests for searching by pages.
         """
         raise NotImplementedError
 
     def get_parsed_ip_list(self, results: str) -> list:
         """
-        Получение списка IP-адресов из результатов поиска.
+        Get a list of IP addresses from the search results.
 
         Args:
-            results: Результаты поиска.
+            results: Search results.
 
         Returns:
-            list[str]: Список IP-адресов.
+            list[str]: List of IP addresses.
         """
         raise NotImplementedError

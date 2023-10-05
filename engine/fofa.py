@@ -8,26 +8,26 @@ from utils.helper import query_to_bs64
 
 class FofaClient(BaseApiClient):
     """
-    Клиент для работы с API Fofa.
+    Client for working with the Fofa API.
 
     Attributes:
-        BASE_URL (str): Базовый URL для API-запросов Fofa.
-        COUNT_ENDPOINT (str): Конечная точка для запроса количества элементов.
-        SEARCH_ENDPOINT (str): Конечная точка для поисковых запросов.
-        _COUNT_KWORD (str): Ключ для получения количества элементов в ответе API.
-        _QUERY_KWORD (str): Ключ для передачи поискового запроса в кодировке Base64.
-        _RESULTS_PER_PAGE (int): Количество результатов на одной странице.
-        _TOTAL_ITEMS_KWORD (str): Ключ для получения общего количества элементов в ответе API.
-        PARAMS (dict): Параметры запроса API.
+        BASE_URL (str): Base URL for Fofa API requests.
+        COUNT_ENDPOINT (str): Endpoint for counting items.
+        SEARCH_ENDPOINT (str): Endpoint for search queries.
+        _COUNT_KWORD (str): Key to retrieve the count in the API response.
+        _QUERY_KWORD (str): Key to pass the search query in Base64 encoding.
+        _RESULTS_PER_PAGE (int): Number of results per page.
+        _TOTAL_ITEMS_KWORD (str): Key to retrieve the total number of items in the API response.
+        PARAMS (dict): API request parameters.
     """
 
     def __init__(self, api_key: str, email: str):
         """
-        Инициализация объекта FofaClient.
+        Initializes the FofaClient object.
 
         Args:
-            api_key (str): API-ключ клиента.
-            email (str): Адрес электронной почты клиента.
+            api_key (str): Client's API key.
+            email (str): Client's email address.
         """
         super().__init__(api_key)
         self.BASE_URL = 'https://fofa.info/api/v1/'
@@ -45,39 +45,39 @@ class FofaClient(BaseApiClient):
 
     def get_parsed_ip_list(self, results: list) -> list:
         """
-        Извлекает IP-адреса из результатов запроса.
+        Extracts IP addresses from the query results.
 
         Args:
-            results: Результаты запроса.
+            results: Query results.
 
         Returns:
-            set[str]: Множество IP-адресов.
+            set[str]: Set of IP addresses.
         """
         return set([_[1] for _ in results])
 
     def count(self, query: str) -> int:
         """
-        Получение количества элементов, удовлетворяющих запросу.
+        Get the number of items matching the query.
 
         Args:
-            query (str): Поисковый запрос.
+            query (str): Search query.
 
         Returns:
-            int: Количество элементов, удовлетворяющих запросу.
+            int: Number of items matching the query.
         """
         query_b64 = query_to_bs64(query)
         return super().count(query_b64)
 
     def get_request_page_list(self, query: str, count: int) -> list:
         """
-        Получение списка запросов для разбивки результатов по страницам.
+        Get a list of requests for paging the results.
 
         Args:
-            query (str): Поисковый запрос.
-            count (int): Количество элементов, удовлетворяющих запросу.
+            query (str): Search query.
+            count (int): Number of items matching the query.
 
         Returns:
-            list[grequests.Request]: Список запросов для поиска по страницам.
+            list[grequests.Request]: List of requests for searching by pages.
         """
         request_list = []
         if count > 0:

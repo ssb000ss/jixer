@@ -1,92 +1,92 @@
-# Консольное приложение для поиска информации с использованием различных поисковых движков
+# Console Application for Information Retrieval Using Various Search Engines
 
-Это консольное приложение предоставляет интерфейс для выполнения поисковых запросов с использованием различных поисковых движков. Пользователи могут выбирать поисковые движки, вводить запросы и сохранять результаты поиска в файлы.
+This console application provides an interface for performing search queries using different search engines. Users can select search engines, input queries, and save search results to files.
 
-## Начало работы
+## Getting Started
 
-Для начала работы с приложением, выполните следующие шаги:
+To get started with the application, follow these steps:
 
-### Предварительные требования
+### Prerequisites
 
-Прежде чем начать, убедитесь, что на вашем компьютере установлены следующие компоненты:
+Before you begin, make sure you have the following components installed on your computer:
 
 - [Python](https://www.python.org/)
 - [Git](https://git-scm.com/)
 
-### Установка
+### Installation
 
-1. Склонируйте репозиторий на свой компьютер:
+1. Clone the repository to your computer:
 
    ```bash
    git clone https://github.com/ssb000ss/jixer.git
    ```
 
-2. Перейдите в каталог проекта:
+2. Navigate to the project directory:
 
    ```bash
    cd jixer
    ```
 
-3. Установите зависимости:
+3. Install the dependencies:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-### Использование
+### Usage
 
-1. Создайте файл `.env` в корневой папке проекта и добавьте следующие переменные среды:
+1. Create a `.env` file in the project's root folder and add the following environment variables:
 
    ```
-   SHODAN_API_KEY=ваш_ключ_Shodan
-   NETLAS_API_KEY=ваш_ключ_Netlas
-   FOFA_API_KEY=ваш_ключ_Fofa
-   FOFA_EMAIL=ваш_электронный_адрес_Fofa
-   ZOOMEYE_API_KEY=ваш_ключ_Zoomeye
+   SHODAN_API_KEY=your_Shodan_key
+   NETLAS_API_KEY=your_Netlas_key
+   FOFA_API_KEY=your_Fofa_key
+   FOFA_EMAIL=your_Fofa_email
+   ZOOMEYE_API_KEY=your_Zoomeye_key
    ```
 
-   Замените `ваш_ключ_Shodan`, `ваш_ключ_Netlas`, `ваш_ключ_Fofa`, `ваш_электронный_адрес_Fofa` и `ваш_ключ_Zoomeye` на ваши реальные ключи API.
+   Replace `your_Shodan_key`, `your_Netlas_key`, `your_Fofa_key`, `your_Fofa_email`, and `your_Zoomeye_key` with your actual API keys.
 
-2. Запустите приложение:
+2. Run the application:
 
    ```bash
    python jixer_CLI.py
    ```
 
-3. Следуйте инструкциям приложения для выбора поискового движка, ввода запроса и сохранения результатов.
+3. Follow the application's instructions to choose a search engine, input a query, and save the results.
 
-## Разработка
+## Development
 
-Если вы хотите внести изменения в приложение, вам потребуется Python для разработки. Рекомендуется использовать виртуальное окружение:
+If you want to make changes to the application, you'll need a development environment with Python. It's recommended to use a virtual environment:
 
-1. Создайте виртуальное окружение:
+1. Create a virtual environment:
 
    ```bash
    python -m venv venv
    ```
 
-2. Активируйте виртуальное окружение:
+2. Activate the virtual environment:
 
-   - На Windows:
+   - On Windows:
 
      ```bash
      venv\Scripts\activate
      ```
 
-   - На macOS и Linux:
+   - On macOS and Linux:
 
      ```bash
      source venv/bin/activate
      ```
 
-3. Установите зависимости разработки:
+3. Install development dependencies:
 
    ```bash
-   pip install -r requirements-dev.txt
+   pip install -r requirements.txt
    ```
 
-4. Внесите необходимые изменения и выполняйте тесты.
+4. Make the necessary changes and run tests.
 
-## Лицензия
+## License
 
-Этот проект лицензируется в соответствии с лицензией MIT. Подробности смотрите в файле [LICENSE](LICENSE).
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

@@ -37,14 +37,14 @@ def show_engine_menu(engines):
 def perform_search(engine, query):
     count = engine.count(query)
     if count:
-        logger.info(f"Запускаю движок {engine} с запросом: {query}")
+        logger.info(f"Running the {engine} engine with the query: {query}")
         servers = engine.search(query, count)
         if engine.save_results(query, servers):
-            logger.info("Результаты успешно сохранены.")
+            logger.info("Results have been successfully saved.")
         else:
-            logger.error("Произошла ошибка при сохранении результатов.")
+            logger.error("An error occurred while saving the results.")
     else:
-        logger.error("Проверьте корректность запроса!")
+        logger.error("Please check the correctness of the query!")
 
 
 # Основная функция
@@ -53,7 +53,7 @@ def main():
 
     while True:
         show_engine_menu(engines)
-        print("Выберите движок для поиска, либо введите 'exit' для выхода")
+        print("Select an engine for search or enter 'exit'")
         engine_key = input("> ").strip()
 
         if engine_key == "exit":
@@ -61,14 +61,12 @@ def main():
 
         if engine_key.isdigit() and 0 < int(engine_key) <= len(engines):
             engine = list(engines.values())[int(engine_key) - 1]
-            print(f"Введите корректный запрос для движка {engine}")
+            print(f"Enter a valid query for the {engine} engine")
             query = input("> ")
             perform_search(engine, query)
         else:
-            logger.error(f"Ошибка ввода. Введите число от 1 до {len(engines)}")
+            logger.error(f"Input error. Enter a number from 1 to {len(engines)}")
 
 
 if __name__ == '__main__':
     main()
-
-
