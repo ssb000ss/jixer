@@ -4,7 +4,7 @@ import dotenv
 
 from engine import ShodanClient, NetlasClient, FofaClient, ZoomeyeClient
 
-# Настройка логгирования
+# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
@@ -13,7 +13,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-# Функция для инициализации настроек и поисковых движков
+# Function to initialize settings and search engines
 def init_settings():
     dotenv.load_dotenv('.env')
     engines = {
@@ -25,7 +25,7 @@ def init_settings():
     return engines
 
 
-# Функция для отображения меню выбора поискового движка
+# Function to display the search engine selection menu
 def show_engine_menu(engines):
     count = 1
     for key in engines.keys():
@@ -33,7 +33,7 @@ def show_engine_menu(engines):
         count += 1
 
 
-# Функция для выполнения поиска и сохранения результатов
+# Function to perform search and save results
 def perform_search(engine, query):
     count = engine.count(query)
     if count:
@@ -47,25 +47,28 @@ def perform_search(engine, query):
         logger.error("Please check the correctness of the query!")
 
 
-# Основная функция
+# Main function
 def main():
     engines = init_settings()
 
     while True:
-        show_engine_menu(engines)
-        print("Select an engine for search or enter 'exit'")
-        engine_key = input("> ").strip()
+        try:
+            show_engine_menu(engines)
+            print("Select an engine for search or enter 'exit'")
+            engine_key = input("> ").strip()
 
-        if engine_key == "exit":
-            break
+            if engine_key == "exit":
+                break
 
-        if engine_key.isdigit() and 0 < int(engine_key) <= len(engines):
-            engine = list(engines.values())[int(engine_key) - 1]
-            print(f"Enter a valid query for the {engine} engine")
-            query = input("> ")
-            perform_search(engine, query)
-        else:
-            logger.error(f"Input error. Enter a number from 1 to {len(engines)}")
+            if engine_key.isdigit() and 0 < int(engine_key) <= len(engines):
+                engine = list(engines.values())[int(engine_key) - 1]
+                print(f"Enter a valid query for the {engine} engine")
+                query = input("> ")
+                perform_search(engine, query)
+            else:
+                logger.error(f"Input error. Enter a number from 1 to {len(engines)}")
+        except KeyboardInterrupt:
+            continue
 
 
 if __name__ == '__main__':
