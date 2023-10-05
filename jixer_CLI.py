@@ -70,7 +70,7 @@ def main():
                 engine = list(engines.values())[int(engine_key) - 1]
                 print(f"Enter a valid query for the {engine} engine")
                 query = input("> ")
-                print(f"Enter the filename in which you want to save the results, or simply press 'Enter'")
+                print("Enter the filename in which you want to save the results, or simply press 'Enter'")
                 file_name = input("> ")
                 servers = perform_search(engine, query)
                 if servers:

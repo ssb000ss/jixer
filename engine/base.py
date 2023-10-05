@@ -1,6 +1,5 @@
 import logging
 import math
-import os
 import time
 from http import HTTPStatus
 import grequests
