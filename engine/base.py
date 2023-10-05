@@ -1,8 +1,6 @@
 import logging
 import math
-import os
 import time
-from datetime import datetime
 from http import HTTPStatus
 import grequests
 import requests
@@ -142,33 +140,6 @@ class BaseApiClient():
         results = self.search(query, count)
         if results:
             return self.get_parsed_ip_list(results)
-
-    def save_results(self, query: str, servers: list[str]) -> bool:
-        """
-        Save search results to a file.
-
-        Args:
-            query (str): Search query.
-            servers (list[str]): List of IP addresses to save.
-
-        Returns:
-            bool: True if the results were successfully saved, False in case of an error.
-        """
-        folder_name = 'results'
-        if not os.path.exists(folder_name):
-            os.makedirs(folder_name)
-        current_datetime = datetime.now()
-        file_name = f'{folder_name}/{current_datetime.strftime("%Y_%m_%d_%H_%M_%S")}_{self}.txt'
-        try:
-            with open(file_name, 'w') as file:
-                file.write(f'Results query: {query} for client {self} - {file_name}\n')
-                for server in servers:
-                    file.write(server + '\n')
-            self.logger.info(
-                f'Results for the query {query} for client "{str(self)}" were successfully written to the file "{file_name}".')
-            return True
-        except IOError as e:
-            self.logger.error(f'An error occurred while writing results to the file: {e}')
 
     def get_request_page_list(self, query: str, count: int) -> list:
         """

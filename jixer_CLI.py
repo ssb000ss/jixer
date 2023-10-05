@@ -3,6 +3,7 @@ import os
 import dotenv
 
 from engine import ShodanClient, NetlasClient, FofaClient, ZoomeyeClient
+from utils.helper import save_results
 
 # Configure logging
 logging.basicConfig(
@@ -39,12 +40,17 @@ def perform_search(engine, query):
     if count:
         logger.info(f"Running the {engine} engine with the query: {query}")
         servers = engine.search(query, count)
-        if engine.save_results(query, servers):
-            logger.info("Results have been successfully saved.")
-        else:
-            logger.error("An error occurred while saving the results.")
+        if servers:
+            return servers
     else:
         logger.error("Please check the correctness of the query!")
+
+
+def save_to_file(query, servers, file_name):
+    if save_results(query, servers, file_name=file_name):
+        logger.info("Results have been successfully saved.")
+    else:
+        logger.error("An error occurred while saving the results.")
 
 
 # Main function
@@ -64,7 +70,11 @@ def main():
                 engine = list(engines.values())[int(engine_key) - 1]
                 print(f"Enter a valid query for the {engine} engine")
                 query = input("> ")
-                perform_search(engine, query)
+                print("Enter the filename in which you want to save the results, or simply press 'Enter'")
+                file_name = input("> ")
+                servers = perform_search(engine, query)
+                if servers:
+                    save_to_file(query, servers, file_name)
             else:
                 logger.error(f"Input error. Enter a number from 1 to {len(engines)}")
         except KeyboardInterrupt:
