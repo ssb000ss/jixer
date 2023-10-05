@@ -4,7 +4,7 @@ import dotenv
 
 from engine import ShodanClient, NetlasClient, FofaClient, ZoomeyeClient
 
-# Настройка логгирования
+# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
@@ -13,7 +13,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-# Функция для инициализации настроек и поисковых движков
+# Function to initialize settings and search engines
 def init_settings():
     dotenv.load_dotenv('.env')
     engines = {
@@ -25,7 +25,7 @@ def init_settings():
     return engines
 
 
-# Функция для отображения меню выбора поискового движка
+# Function to display the search engine selection menu
 def show_engine_menu(engines):
     count = 1
     for key in engines.keys():
@@ -33,7 +33,7 @@ def show_engine_menu(engines):
         count += 1
 
 
-# Функция для выполнения поиска и сохранения результатов
+# Function to perform search and save results
 def perform_search(engine, query):
     count = engine.count(query)
     if count:
@@ -47,7 +47,7 @@ def perform_search(engine, query):
         logger.error("Please check the correctness of the query!")
 
 
-# Основная функция
+# Main function
 def main():
     engines = init_settings()
 
