@@ -7,7 +7,6 @@ def netlas_test(engines):
 
 def zoomeye_test(engines):
     engine_arg = '-z'
-    query = 'app:"Microsoft Exchange 2010 smtpd" +after:"2022-10-03" +country:"SN"'
     engine = engines.get(engine_arg)
     engine.count(query)
     engine.search_and_save_ip_list(query)
